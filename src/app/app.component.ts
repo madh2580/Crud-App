@@ -43,16 +43,23 @@ INR: string|undefined;
    }
 
   openAddEditEmpForm() {
-    this._dialog.open(EmpAddEditComponent);
+    const dialogRef = this._dialog.open(EmpAddEditComponent);
+    dialogRef .afterClosed() .subscribe({
+      next: (val) => {
+        if(val) {
+          this.getEmployeeList();
+        }
+      },
+    });
   }
   getEmployeeList() {
     this.empService.getEmployeeList().subscribe({
       next: (res: any) => {
+        console.log('Allu data',res)
         this.dataSource = new MatTableDataSource(res);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;   
-       },
-      error: console.log,
+       }
     });
   }  
   applyFilter(event:Event) {
@@ -66,9 +73,16 @@ INR: string|undefined;
   deleteEmployee(id:number){
     this.empService.delateEmployee(id).subscribe({
       next: (res: any) => {
-        alert('Employee deleted');
+        alert('Employee deleted!');
+        this.getEmployeeList();
       },
-    })
+      error: console.log,
+    });
+  }
+  openEditForm(data:any) {
+    this. _dialog.open(EmpAddEditComponent,{
+      data,
+    });
   }
 
       }
